@@ -10,6 +10,8 @@ import AllMessageHistory from "./AllMessageHistory";
 export default function Profile({ setChatboxOpen = () => {}, setChatRecipient = () => {} }) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [formData, setFormData] = useState({
     name: "",
     whatsapp_number: "",
@@ -494,6 +496,50 @@ export default function Profile({ setChatboxOpen = () => {}, setChatRecipient = 
   const sectionUserInfoRef = useRef(null);
   const sectionChangePasswordRef = useRef(null);
 
+  // Clear open query param function
+  const clearOpenQueryParam = () => {
+    try {
+      const params = new URLSearchParams(searchParams?.toString?.() || "");
+      params.delete("open");
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    } catch {}
+  };
+
+  // Handle opening specific widget/modal via query param from navbar sheet
+  useEffect(() => {
+    const open = searchParams?.get("open");
+    if (!open) return;
+    if (open === "leave") {
+      setShowLeaveModal(true);
+    } else if (open === "direct") {
+      setShowMessageModal(true);
+    } else if (open === "sent") {
+      setShowSentMessageHistoryModal(true);
+    } else if (open === "talk") {
+      // Wait for users to load before attempting to open the chat
+      if (isLoadingUsers) return; // will rerun when loading completes
+      if (users && users.length > 0) {
+        handleTalkToSuperintendent();
+      } else {
+        // Fallback: refetch users once if empty
+        (async () => {
+          try {
+            const resp = await fetch("/api/member/users", { credentials: "include" });
+            const data = await resp.json().catch(() => ({}));
+            if (resp.ok && Array.isArray(data.users) && data.users.length) {
+              setUsers(data.users);
+              handleTalkToSuperintendent();
+            }
+          } catch {
+            setError("Failed to load users for chat.");
+            setTimeout(() => setError(""), 5000);
+          }
+        })();
+      }
+    }
+  }, [searchParams, isLoadingUsers, users]);
+
   if (status === "loading") {
     return (
       <motion.div
@@ -517,53 +563,6 @@ export default function Profile({ setChatboxOpen = () => {}, setChatRecipient = 
     router.push("/login");
     return null;
   }
-
-  // Open specific widget/modal via query param from navbar sheet
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const clearOpenQueryParam = () => {
-    try {
-      const params = new URLSearchParams(searchParams?.toString?.() || "");
-      params.delete("open");
-      const qs = params.toString();
-      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
-    } catch {}
-  };
-  useEffect(() => {
-    const open = searchParams?.get("open");
-    if (!open) return;
-    if (open === "leave") {
-      setShowLeaveModal(true);
-    } else if (open === "direct") {
-      setShowMessageModal(true);
-    } else if (open === "sent") {
-      setShowSentMessageHistoryModal(true);
-    } else if (open === "talk") {
-      // Wait for users to load before attempting to open the chat
-      if (isLoadingUsers) return; // will rerun when loading completes
-      if (users && users.length > 0) {
-        handleTalkToSuperintendent();
-      } else {
-        // Fallback: refetch users once if empty
-        (async () => {
-          try {
-            const resp = await fetch("/api/member/users", { credentials: "include" });
-            const data = await resp.json().catch(() => ({}));
-            if (resp.ok && Array.isArray(data.users) && data.users.length) {
-              setUsers(data.users);
-              setTimeout(() => handleTalkToSuperintendent(), 0);
-            } else {
-              setError("Superintendent not found. Please contact an admin or try again later.");
-              setTimeout(() => setError(""), 5000);
-            }
-          } catch {
-            setError("Failed to load users for chat.");
-            setTimeout(() => setError(""), 5000);
-          }
-        })();
-      }
-    }
-  }, [searchParams, isLoadingUsers, users]);
 
   return (
     <motion.div
