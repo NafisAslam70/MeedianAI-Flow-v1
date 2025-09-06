@@ -6,6 +6,97 @@ import useSWR from "swr";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
+// Component to handle individual extension request with proper hook usage
+function ExtensionRequestItem({ 
+  task, 
+  getStatusColor, 
+  handleAcceptExtension, 
+  handleMoveToUndone, 
+  handleViewTaskDetails,
+  acceptedExtensions,
+  undoneTasks,
+  customDates,
+  setCustomDates
+}) {
+  const { data: taskData, mutate: mutateTask } = useSWR(`/api/member/assignedTasks?taskId=${task.id}&action=task`, fetcher);
+  const originalDeadline = taskData?.task?.deadline ? new Date(taskData.task.deadline).toLocaleDateString() : "N/A";
+  const colors = getStatusColor(task.statusUpdate);
+
+  return (
+    <motion.div
+      key={task.id}
+      className={`bg-teal-50/40 rounded-3xl shadow-md p-4 border ${colors.border} hover:shadow-xl transition-all duration-200`}
+      whileHover={{ y: -4, scale: 1.01 }}
+    >
+      <div className="flex justify-between items-center mb-4">
+        <p className="text-sm font-semibold text-gray-800 truncate pr-4">
+          {task.title || "Untitled"}
+        </p>
+        <span className={`text-xs px-2 py-1 rounded-full ${colors.bg} ${colors.text} font-medium capitalize`}>
+          {(task.statusUpdate || "not_started").replace("_", " ")}
+        </span>
+      </div>
+      <div className="mb-4">
+        <p className="text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1">
+          <Calendar size={14} className="text-teal-600" /> Original: {originalDeadline}
+        </p>
+        <p className="text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1">
+          <Calendar size={14} className="text-teal-600" /> Requested: {task.newDeadline ? new Date(task.newDeadline).toLocaleDateString() : "N/A"}
+        </p>
+      </div>
+      <div className="flex gap-2 mb-2">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={async () => {
+            await handleAcceptExtension(task.id, task.newDeadline);
+            mutateTask();
+          }}
+          className="px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700"
+          disabled={acceptedExtensions[task.id]}
+        >
+          {acceptedExtensions[task.id] ? "Accepted" : "Accept"}
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => handleMoveToUndone(task)}
+          className="px-2 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-500"
+          disabled={undoneTasks[task.id]}
+        >
+          {undoneTasks[task.id] ? "Moved to Undone" : "Move to Undone"}
+        </motion.button>
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="date"
+          value={customDates[task.id] || ''}
+          onChange={(e) => setCustomDates({ ...customDates, [task.id]: e.target.value })}
+          className="border border-teal-200 p-1 rounded text-xs flex-1 bg-teal-50/50 focus:ring-2 focus:ring-teal-500"
+        />
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={async () => {
+            await handleAcceptExtension(task.id, customDates[task.id]);
+            mutateTask();
+          }}
+          disabled={!customDates[task.id] || acceptedExtensions[task.id]}
+          className="px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 disabled:opacity-50"
+        >
+          Set Custom
+        </motion.button>
+        <motion.button
+          onClick={() => handleViewTaskDetails(task.id)}
+          className="text-green-600 text-xs font-medium hover:underline"
+        >
+          View Details
+        </motion.button>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function AssignedTasksStepView({
   assignedTasks,
   handlePrevViewStep,
@@ -431,85 +522,20 @@ export default function AssignedTasksStepView({
           </div>
           <div className="space-y-4 overflow-y-auto max-h-[400px]">
             {extensionRequests.length > 0 ? (
-              extensionRequests.map((task) => {
-                const { data: taskData, mutate: mutateTask } = useSWR(`/api/member/assignedTasks?taskId=${task.id}&action=task`, fetcher);
-                const originalDeadline = taskData?.task?.deadline ? new Date(taskData.task.deadline).toLocaleDateString() : "N/A";
-                const colors = getStatusColor(task.statusUpdate);
-
-                return (
-                  <motion.div
-                    key={task.id}
-                    className={`bg-teal-50/40 rounded-3xl shadow-md p-4 border ${colors.border} hover:shadow-xl transition-all duration-200`}
-                    whileHover={{ y: -4, scale: 1.01 }}
-                  >
-                    <div className="flex justify-between items-center mb-4">
-                      <p className="text-sm font-semibold text-gray-800 truncate pr-4">
-                        {task.title || "Untitled"}
-                      </p>
-                      <span className={`text-xs px-2 py-1 rounded-full ${colors.bg} ${colors.text} font-medium capitalize`}>
-                        {(task.statusUpdate || "not_started").replace("_", " ")}
-                      </span>
-                    </div>
-                    <div className="mb-4">
-                      <p className="text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1">
-                        <Calendar size={14} className="text-teal-600" /> Original: {originalDeadline}
-                      </p>
-                      <p className="text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1">
-                        <Calendar size={14} className="text-teal-600" /> Requested: {task.newDeadline ? new Date(task.newDeadline).toLocaleDateString() : "N/A"}
-                      </p>
-                    </div>
-                    <div className="flex gap-2 mb-2">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={async () => {
-                          await handleAcceptExtension(task.id, task.newDeadline);
-                          mutateTask();
-                        }}
-                        className="px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700"
-                        disabled={acceptedExtensions[task.id]}
-                      >
-                        {acceptedExtensions[task.id] ? "Accepted" : "Accept"}
-                      </motion.button>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleMoveToUndone(task)}
-                        className="px-2 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-500"
-                        disabled={undoneTasks[task.id]}
-                      >
-                        {undoneTasks[task.id] ? "Moved to Undone" : "Move to Undone"}
-                      </motion.button>
-                    </div>
-                    <div className="flex gap-2">
-                      <input
-                        type="date"
-                        value={customDates[task.id] || ''}
-                        onChange={(e) => setCustomDates({ ...customDates, [task.id]: e.target.value })}
-                        className="border border-teal-200 p-1 rounded text-xs flex-1 bg-teal-50/50 focus:ring-2 focus:ring-teal-500"
-                      />
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={async () => {
-                          await handleAcceptExtension(task.id, customDates[task.id]);
-                          mutateTask();
-                        }}
-                        disabled={!customDates[task.id] || acceptedExtensions[task.id]}
-                        className="px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 disabled:opacity-50"
-                      >
-                        Set Custom
-                      </motion.button>
-                      <motion.button
-                        onClick={() => handleViewTaskDetails(task.id)}
-                        className="text-green-600 text-xs font-medium hover:underline"
-                      >
-                        View Details
-                      </motion.button>
-                    </div>
-                  </motion.div>
-                );
-              })
+              extensionRequests.map((task) => (
+                <ExtensionRequestItem
+                  key={task.id}
+                  task={task}
+                  getStatusColor={getStatusColor}
+                  handleAcceptExtension={handleAcceptExtension}
+                  handleMoveToUndone={handleMoveToUndone}
+                  handleViewTaskDetails={handleViewTaskDetails}
+                  acceptedExtensions={acceptedExtensions}
+                  undoneTasks={undoneTasks}
+                  customDates={customDates}
+                  setCustomDates={setCustomDates}
+                />
+              ))
             ) : (
               <p className="text-sm text-gray-600 text-center">No deadline extension requests.</p>
             )}

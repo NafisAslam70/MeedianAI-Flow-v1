@@ -18,11 +18,7 @@ export default function MyMRIs() {
   const router = useRouter();
   const role = session?.user?.role;
 
-  if (status === "loading") return <div>Loading...</div>;
-  if (!["member", "team_manager"].includes(role)) {
-    return <div>Access Denied</div>;
-  }
-
+  // All hooks must be called before any conditional returns
   const [isAssignedTasksModalOpen, setIsAssignedTasksModalOpen] = useState(false);
   const [isRoutineTasksModalOpen, setIsRoutineTasksModalOpen] = useState(false);
   const [isAMRIsModalOpen, setIsAMRIsModalOpen] = useState(false);
@@ -126,6 +122,12 @@ export default function MyMRIs() {
       setTimeout(() => setError(null), 3000);
     }
   }, [session, todayMRIsData, todayMRIsError, weeklyMRIsData, weeklyMRIsError, assignedTasksData, assignedTasksError, routineTasksData, routineTasksError]);
+
+  // Conditional returns after all hooks
+  if (status === "loading") return <div>Loading...</div>;
+  if (!["member", "team_manager"].includes(role)) {
+    return <div>Access Denied</div>;
+  }
 
   const today = format(new Date("2025-07-28T21:45:00+08:00"), "EEEE, MMMM d, yyyy");
 
