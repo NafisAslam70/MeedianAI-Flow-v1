@@ -547,7 +547,7 @@ export default function DayCloseWaitingModal({
                         {dayCloseStatus.ISRoutineLog && (
                           <div className="flex justify-end">
                             <div className="bg-gray-100 p-3 rounded-l-xl rounded-br-xl max-w-[80%] text-sm text-gray-700">
-                              <span className="font-medium">Supervisor's Comment:</span> {dayCloseStatus.ISRoutineLog}
+                              <span className="font-medium">Supervisor&apos;s Comment:</span> {dayCloseStatus.ISRoutineLog}
                             </div>
                           </div>
                         )}
@@ -562,7 +562,7 @@ export default function DayCloseWaitingModal({
                         {dayCloseStatus.ISGeneralLog && (
                           <div className="flex justify-end">
                             <div className="bg-gray-100 p-3 rounded-l-xl rounded-br-xl max-w-[80%] text-sm text-gray-700">
-                              <span className="font-medium">Supervisor's Comment:</span> {dayCloseStatus.ISGeneralLog}
+                              <span className="font-medium">Supervisor&apos;s Comment:</span> {dayCloseStatus.ISGeneralLog}
                             </div>
                           </div>
                         )}

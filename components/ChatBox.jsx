@@ -55,10 +55,7 @@ const formatDate = (dateStr) => {
 
 export default function ChatBox({ userDetails, isOpen = false, setIsOpen, recipientId }) {
   const pathname = usePathname();
-  if (pathname.includes("/workTogether")) return null;
-
   const { data: session } = useSession();
-
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);
   const [selectedRecipient, setSelectedRecipient] = useState(recipientId || "");
@@ -431,6 +428,9 @@ export default function ChatBox({ userDetails, isOpen = false, setIsOpen, recipi
       )
       .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
   }, [messages, selectedRecipient, userDetails?.id]);
+
+  // Conditional return after all hooks
+  if (pathname.includes("/workTogether")) return null;
 
   return (
     <>

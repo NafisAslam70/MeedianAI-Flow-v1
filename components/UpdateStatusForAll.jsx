@@ -128,7 +128,7 @@ const UpdateStatusForAll = ({
           <div className="flex-[2] min-w-[300px] pr-0 md:pr-5 flex flex-col overflow-y-auto h-[65vh]">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-2">
               <AlertCircle className="w-6 h-6 text-teal-600" />
-              Update Status for "{task?.title || "Untitled Task"}"
+              Update Status for &quot;{task?.title || "Untitled Task"}&quot;
             </h2>
 
             {sprints.length ? (

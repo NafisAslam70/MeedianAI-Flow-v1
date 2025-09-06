@@ -257,7 +257,7 @@ export default function MyMRIs() {
           >
             <div className="flex items-center gap-2 mb-4">
               <Calendar size={20} className="text-teal-600" />
-              <h2 className="text-xl font-bold text-gray-800">Today's Rituals</h2>
+              <h2 className="text-xl font-bold text-gray-800">Today&apos;s Rituals</h2>
             </div>
             <p className="text-sm text-gray-600 mb-6">{today}</p>
 

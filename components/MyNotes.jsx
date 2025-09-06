@@ -24,6 +24,7 @@ const MyNotes = ({
   const [showAddNoteModal, setShowAddNoteModal] = useState(initialMode === "add");
   const [localError, setLocalError] = useState("");
   const [localSuccess, setLocalSuccess] = useState("");
+  const [toolbarHidden, setToolbarHidden] = useState(false);
 
   // Load notes
   useEffect(() => {
@@ -47,6 +48,16 @@ const MyNotes = ({
     };
     if (userId) fetchNotes();
   }, [userId, setError]);
+
+  // Handle Escape key for fullScreen mode
+  useEffect(() => {
+    if (!fullScreen) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setToolbarHidden(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [fullScreen]);
 
   // Helpers
   const closeAllInner = useCallback(() => {
@@ -152,14 +163,6 @@ const MyNotes = ({
 
   // Full‑screen writer overlay (uses same add-note state/actions)
   if (fullScreen) {
-    const [toolbarHidden, setToolbarHidden] = useState(false);
-    useEffect(() => {
-      const onKey = (e) => {
-        if (e.key === "Escape") setToolbarHidden(false);
-      };
-      window.addEventListener("keydown", onKey);
-      return () => window.removeEventListener("keydown", onKey);
-    }, []);
     const saveAsPDF = () => {
       const esc = (s = "") => s
         .replaceAll(/&/g, "&amp;")

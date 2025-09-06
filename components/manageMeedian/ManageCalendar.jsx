@@ -731,7 +731,7 @@ export default function ManageCalendar({
           >
             <h2 className="text-lg font-semibold text-white mb-4 tracking-wide">Confirm {editingEntry ? "Edit" : "Add"} Week</h2>
             <p className="text-base text-white/80 mb-6">
-              Are you sure you want to {editingEntry ? "edit this week" : "add this week"}? Changes will be queued and saved to the database upon clicking "Save Calendar".
+              Are you sure you want to {editingEntry ? "edit this week" : "add this week"}? Changes will be queued and saved to the database upon clicking &quot;Save Calendar&quot;.
             </p>
             <div className="flex justify-end gap-3">
               <motion.button

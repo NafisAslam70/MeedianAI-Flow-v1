@@ -610,7 +610,7 @@ export default function ManagersCommonDashboard({ disableUserSelect = false }) {
                 >
                   Back
                 </motion.button>
-                <h1 className="text-2xl sm:text-3xl font-bold text-indigo-800 truncate">{viewedUser?.name}'s Dashboard</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-indigo-800 truncate">{viewedUser?.name}&apos;s Dashboard</h1>
               </>
             ) : (
               <>

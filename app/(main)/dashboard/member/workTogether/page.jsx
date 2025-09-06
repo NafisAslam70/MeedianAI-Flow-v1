@@ -492,7 +492,7 @@ export default function WorkTogether() {
             <h1 className="text-2xl font-bold flex items-center gap-2 text-cyan-100">
               <Users size={24} className="text-purple-400" /> MeedianAI Together Workspace
             </h1>
-            <p className="text-sm text-cyan-300 italic">"As a Team, We Lead the World"</p>
+            <p className="text-sm text-cyan-300 italic">&quot;As a Team, We Lead the World&quot;</p>
           </div>
           <div className="flex items-center gap-2">
             <select

@@ -1863,7 +1863,7 @@ export default function Navbar() {
               {fullStep === 1 && (
                 <div>
                   <div className="w-step-title">2) Widgets, MRIs and Profile</div>
-                  <div className="w-step-text">Use "My Meed Widgets" to access MRN, performance, leave and messaging in one place.</div>
+                  <div className="w-step-text">Use &quot;My Meed Widgets&quot; to access MRN, performance, leave and messaging in one place.</div>
                   <div className="w-step-actions">
                     <button className="w-btn" onClick={() => setIsProfileOpen(true)}>Open My Meed Widgets</button>
                     <button className="w-btn alt" onClick={() => setIsMRISheetOpen(true)}>Open MRIs</button>
