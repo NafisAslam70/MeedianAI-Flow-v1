@@ -1,9 +1,16 @@
 # MeedianAI Flow (v1)
 
-An earlier version of the MeedianAI Flow school and community operations platform. This repository preserves a prior implementation with its own Next.js application, database code, and supporting documentation.
+The first major iteration of MeedianAI Flow, a role-based operations platform for coordinating school/community schedules, routines, tasks, and attendance.
+
+## Verified areas
+- Admin, team-manager, and member dashboards
+- Shared task tracking, routine workflows, and approvals
+- Attendance and escalation/reporting modules
+- Deep Calendar web/mobile planning documentation
+- Finance module integration notes
 
 ## Tech
-Next.js, React, PostgreSQL, Drizzle ORM, Tailwind CSS, and the integrations listed in `TECH_STACK.txt`.
+Next.js 15, React 19, NextAuth, PostgreSQL, Drizzle ORM, Tailwind CSS, and integrations documented in `TECH_STACK.txt`.
 
 ## Run locally
 ```bash
@@ -11,4 +18,4 @@ npm install
 npm run dev
 ```
 
-Some features require environment variables and external services. Review the configuration files and documentation before running the app.
+Configure database and provider credentials through environment variables. This repo is a distinct version; see [v2](https://github.com/NafisAslam70/MeedianAI-Flow-v2) for the most feature-rich implementation in this series.
